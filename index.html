@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Profile Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Student Profile Portal</h1>
+  </header>
+
+  <main>
+    <form id="regForm" class="registration-form" onsubmit="return false;">
+      <fieldset>
+        <legend>Personal Information</legend>
+
+        <label for="name">Student Name</label>
+        <input id="name" name="name" type="text" placeholder="Enter full name" required oninput="updatePreview()" />
+
+        <label for="roll">Roll Number</label>
+        <input id="roll" name="roll" type="number" placeholder="e.g. 2025001" required oninput="updatePreview()" />
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="name@example.com" oninput="updatePreview()" />
+      </fieldset>
+
+      <fieldset>
+        <legend>Academic & Extras</legend>
+
+        <label for="department">Department (try typing or choose)</label>
+        <input list="deptList" id="department" name="department" placeholder="CSE, EEE, BBA..." oninput="updatePreview()" />
+        <datalist id="deptList">
+          <option value="CSE">
+          <option value="EEE">
+          <option value="BBA">
+          <option value="ME">
+          <option value="Civil">
+          <option value="Architecture">
+        </datalist>
+
+        <label>Gender</label>
+        <div class="inline">
+          <label><input type="radio" name="gender" value="Male" onchange="updatePreview()"> Male</label>
+          <label><input type="radio" name="gender" value="Female" onchange="updatePreview()"> Female</label>
+          <label><input type="radio" name="gender" value="Other" onchange="updatePreview()"> Other</label>
+        </div>
+
+        <label>Skills (choose any)</label>
+        <div class="inline">
+          <label><input type="checkbox" name="skills" value="HTML" onchange="updatePreview()"> HTML</label>
+          <label><input type="checkbox" name="skills" value="CSS" onchange="updatePreview()"> CSS</label>
+          <label><input type="checkbox" name="skills" value="JavaScript" onchange="updatePreview()"> JavaScript</label>
+          <label><input type="checkbox" name="skills" value="Python" onchange="updatePreview()"> Python</label>
+          <label><input type="checkbox" name="skills" value="SQL" onchange="updatePreview()"> SQL</label>
+        </div>
+
+        <label for="about">About your self</label>
+        <textarea id="about" name="about" rows="4" placeholder="Write a short intro..." oninput="updatePreview()"></textarea>
+
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" onclick="addSampleRow()">Submit</button>
+        <button type="reset" onclick="resetPreview()">Reset</button>
+      </div>
+
+      <section class="preview">
+        <h2>Profile Preview</h2>
+        <p><strong>Preview:</strong> <output id="profileOutput">No data yet.</output></p>
+      </section>
+    </form>
+
+    <section>
+      <h2>Registered Students Information :</h2>
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>Roll</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Email</th>
+            <th>Skills</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>911016</td>
+            <td>Mymuna Khatun</td>
+            <td>CSE</td>
+            <td>mymuna123@gmail.com</td>
+            <td>HTML, CSS</td>
+          </tr>
+          <tr>
+            <td>2025002</td>
+            <td>Fatema Khatun</td>
+            <td>EEE</td>
+            <td>fatema@example.com</td>
+            <td>Python, SQL</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+        <p>© 2025 Students Profile Portal || Designed by Mymuna Khatun</p>
+  </footer>
+
+  <script>
+    function updatePreview() {
+      const name = document.getElementById('name').value.trim();
+      const roll = document.getElementById('roll').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const dept = document.getElementById('department').value.trim();
+
+      const genderEl = document.querySelector('input[name="gender"]:checked');
+      const gender = genderEl ? genderEl.value : '';
+
+      const skillsEls = Array.from(document.querySelectorAll('input[name="skills"]:checked'));
+      const skills = skillsEls.map(e => e.value);
+
+      const about = document.getElementById('about').value.trim();
+
+      let parts = [];
+      if (name) parts.push(name);
+      if (roll) parts.push('(Roll: ' + roll + ')');
+      if (dept) parts.push('- ' + dept);
+      if (email) parts.push('- ' + email);
+      if (skills.length) parts.push('- Skills: ' + skills.join(', '));
+      if (gender) parts.push('- Gender: ' + gender);
+      if (about) parts.push('\nAbout: ' + about);
+
+      const out = document.getElementById('profileOutput');
+      out.value = parts.length ? parts.join(' ') : 'No data yet.';
+    }
+
+    function resetPreview() {
+      document.getElementById('profileOutput').value = 'No data yet.';
+    }
+
+    function addSampleRow() {
+      const name = document.getElementById('name').value.trim();
+      const roll = document.getElementById('roll').value.trim();
+      if (!name || !roll) {
+        alert('Please provide at least Name and Roll before adding.');
+        return;
+      }
+      const dept = document.getElementById('department').value.trim() || 'N/A';
+      const email = document.getElementById('email').value.trim() || 'N/A';
+      const skillsEls = Array.from(document.querySelectorAll('input[name="skills"]:checked'));
+      const skills = skillsEls.map(e => e.value).join(', ') || 'None';
+
+      const tbody = document.querySelector('#studentsTable tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + roll + '</td>'
+                   + '<td>' + name + '</td>'
+                   + '<td>' + dept + '</td>'
+                   + '<td>' + email + '</td>'
+                   + '<td>' + skills + '</td>';
+      tbody.appendChild(tr);
+
+      // Briefly highlight added row
+      tr.style.background = '#e6ffea';
+      setTimeout(() => { tr.style.background = ''; }, 1600);
+    }
+
+    // Initialize preview on load in case of auto-filled fields
+    window.addEventListener('load', updatePreview);
+  </script>
+</body>
+</html>
